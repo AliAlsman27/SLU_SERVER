@@ -2,6 +2,15 @@ import os
 import json
 from firebase_admin import credentials, initialize_app
 from pathlib import Path
+import pytz
+
+# Timezone configuration - easily changeable via environment variable
+TIMEZONE = os.environ.get('TIMEZONE', 'Africa/Cairo')  # Default to Egypt (Cairo)
+tz = pytz.timezone(TIMEZONE)
+
+def get_timezone():
+    """Get the configured timezone object"""
+    return tz
 
 def init_firebase():
     try:

@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Request
 from firebase_admin import db
 from datetime import datetime
 from models import SensorData
-from config import init_firebase
+from config import init_firebase, get_timezone
 
 app = FastAPI(title="Sensor Logger API")
 
@@ -18,7 +18,8 @@ async def home():
 async def receive_sensor_data(sensor_data: SensorData):
     try:
         print("Received data:", sensor_data)
-        timestamp = datetime.now().isoformat()
+        tz = get_timezone()
+        timestamp = datetime.now(tz).isoformat()
         
         # Add timestamp to each reading, matching ESP32 schema
         updated_data = []
@@ -68,9 +69,10 @@ async def wake_device(device_id: str):
             raise HTTPException(status_code=404, detail="Device not found")
             
         # Log wake request
+        tz = get_timezone()
         wake_ref = db.reference(f'wake_requests/{device_id}')
         wake_ref.set({
-            'timestamp': datetime.now().isoformat(),
+            'timestamp': datetime.now(tz).isoformat(),
             'status': 'pending'
         })
         
