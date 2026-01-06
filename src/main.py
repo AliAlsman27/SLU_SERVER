@@ -21,29 +21,16 @@ async def receive_sensor_data(sensor_data: SensorData):
         tz = get_timezone()
         timestamp = datetime.now(tz).isoformat()
         
-        # Add timestamp to each reading, matching ESP32 schema
-        updated_data = []
-        for reading in sensor_data.data:
-            # Convert to dict if it's a Pydantic model
-            if hasattr(reading, "dict"):
-                reading = reading.dict()
-            # Only keep expected keys and add timestamp
-            filtered = {
-                "sensor": reading.get("sensor"),
-                "value": reading.get("value"),
-                "unit": reading.get("unit"),
-                "timestamp": timestamp
-            }
-            updated_data.append(filtered)
-
+        # Convert to dict and add timestamp
+        # Using .dict() for Pydantic v1 (or v2 compat), which recursively handles nested models like GPSData
+        data_dict = sensor_data.dict()
+        data_dict['timestamp'] = timestamp
+        
         # Save to Firebase with status
         ref = db.reference(f'stations/{sensor_data.device_id}')
-        ref.set({
-            'device_id': sensor_data.device_id,
-            'status': sensor_data.status,  # Add status to Firebase
-            'data': updated_data,
-            'timestamp': timestamp
-        })
+        
+        # We replace the entire node with the new data structure
+        ref.set(data_dict)
 
         return {"status": "success"}
     except Exception as e:
