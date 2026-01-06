@@ -1,6 +1,8 @@
 import os
 import json
 from firebase_admin import credentials, initialize_app
+from supabase import create_client, Client
+
 from pathlib import Path
 import pytz
 
@@ -37,3 +39,18 @@ def init_firebase():
         })
     except Exception as e:
         raise RuntimeError(f"Failed to initialize Firebase: {str(e)}")
+
+def init_supabase() -> Client | None:
+    url = os.environ.get("SUPABASE_URL")
+    key = os.environ.get("SUPABASE_KEY")
+    
+    if not url or not key:
+        print("Warning: SUPABASE_URL or SUPABASE_KEY not found. Supabase will not be initialized.")
+        return None
+        
+    try:
+        return create_client(url, key)
+    except Exception as e:
+        print(f"Failed to initialize Supabase: {e}")
+        return None
+

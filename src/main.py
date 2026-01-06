@@ -2,13 +2,14 @@ from fastapi import FastAPI, HTTPException, Request
 from firebase_admin import db
 from datetime import datetime
 from models import SensorData
-from config import init_firebase, get_timezone
+from config import init_firebase, get_timezone, init_supabase
 
 app = FastAPI(title="Sensor Logger API")
 
 @app.on_event("startup")
 async def startup_event():
     init_firebase()
+    app.state.supabase = init_supabase()
 
 @app.get("/")
 async def home():
@@ -23,7 +24,11 @@ async def receive_sensor_data(sensor_data: SensorData):
         
         # Convert to dict and add timestamp
         # Using .dict() for Pydantic v1 (or v2 compat), which recursively handles nested models like GPSData
-        data_dict = sensor_data.dict()
+        # Using .model_dump() for Pydantic v2
+        if hasattr(sensor_data, 'model_dump'):
+            data_dict = sensor_data.model_dump()
+        else: 
+            data_dict = sensor_data.dict()
         data_dict['timestamp'] = timestamp
         
         # Save to Firebase with status
@@ -31,6 +36,13 @@ async def receive_sensor_data(sensor_data: SensorData):
         
         # We replace the entire node with the new data structure
         ref.set(data_dict)
+
+        # Try to save to Supabase (non-blocking)
+        try:
+            if hasattr(app.state, 'supabase') and app.state.supabase:
+                app.state.supabase.table("sensor_data").insert(data_dict).execute()
+        except Exception as e_sup:
+            print(f"Supabase error: {e_sup}")
 
         return {"status": "success"}
     except Exception as e:
