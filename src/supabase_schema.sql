@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS sensor_data (
     level_sensor_1 FLOAT,
     matrix_sensor_2 JSONB,
     level_sensor_2 FLOAT,
+    matrix_total JSONB,
     total_level FLOAT,
     gps JSONB,
     battery INTEGER

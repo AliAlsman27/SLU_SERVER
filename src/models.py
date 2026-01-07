@@ -14,6 +14,7 @@ class SensorData(BaseModel):
     level_sensor_1: float
     matrix_sensor_2: List[int]
     level_sensor_2: float
+    matrix_total: List[int]
     total_level: float
     gps: Optional[GPSData] = None
     battery: int
