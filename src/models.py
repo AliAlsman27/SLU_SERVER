@@ -18,4 +18,7 @@ class SensorData(BaseModel):
     total_level: float
     gps: Optional[GPSData] = None
     battery: int
+    vbat_mv: Optional[int] = None
+    reset_reason: Optional[int] = None
+    wakeup_count: Optional[int] = None
 
