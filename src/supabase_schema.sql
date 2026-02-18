@@ -13,7 +13,10 @@ CREATE TABLE IF NOT EXISTS sensor_data (
     matrix_total JSONB,
     total_level FLOAT,
     gps JSONB,
-    battery INTEGER
+    battery INTEGER,
+    vbat_mv INTEGER,
+    reset_reason INTEGER,
+    wakeup_count INTEGER
 );
 
 -- Optional: Create an index on device_id and timestamp for faster queries
