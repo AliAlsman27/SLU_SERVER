@@ -26,16 +26,14 @@ async def receive_sensor_data(sensor_data: SensorData):
         # Using .dict() for Pydantic v1 (or v2 compat), which recursively handles nested models like GPSData
         # Using .model_dump() for Pydantic v2
         if hasattr(sensor_data, 'model_dump'):
-            data_dict = sensor_data.model_dump()
+            data_dict = sensor_data.model_dump(exclude_none=True)
         else: 
-            data_dict = sensor_data.dict()
+            data_dict = sensor_data.dict(exclude_none=True)
         data_dict['timestamp'] = timestamp
         
-        # Save to Firebase with status
+        # Update Firebase (preserves manually set fields like 'enable')
         ref = db.reference(f'stations/{sensor_data.device_id}')
-        
-        # We replace the entire node with the new data structure
-        ref.set(data_dict)
+        ref.update(data_dict)
 
         # Try to save to Supabase (non-blocking)
         try:
