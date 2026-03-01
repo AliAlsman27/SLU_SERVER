@@ -21,5 +21,5 @@ class SensorData(BaseModel):
     vbat_mv: Optional[int] = None
     reset_reason: Optional[int] = None
     wakeup_count: Optional[int] = None
-    slave_used: Optional[bool] = None
+    slave_used: Optional[int] = None
 
