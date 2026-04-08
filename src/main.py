@@ -6,8 +6,8 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from firebase_admin import db
 
-from config import get_timezone, init_firebase, init_supabase
-from models import SensorData
+from src.config import get_timezone, init_firebase, init_supabase
+from src.models import SensorData
 
 FIRMWARE_DIR = Path(__file__).resolve().parent.parent / "firmware"
 FIRMWARE_DIR.mkdir(exist_ok=True)
