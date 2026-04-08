@@ -8,6 +8,7 @@ class GPSData(BaseModel):
 
 class SensorData(BaseModel):
     device_id: str
+    firmware_version: Optional[str] = None
     status: str
     basket_size: str
     matrix_sensor_1: List[int]
@@ -22,4 +23,3 @@ class SensorData(BaseModel):
     reset_reason: Optional[int] = None
     wakeup_count: Optional[int] = None
     slave_used: Optional[int] = None
-

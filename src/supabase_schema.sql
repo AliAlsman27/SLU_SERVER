@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS sensor_data (
     battery INTEGER,
     vbat_mv INTEGER,
     reset_reason INTEGER,
-    wakeup_count INTEGER
+    wakeup_count INTEGER,
+    slave_used INTEGER
 );
 
 -- Optional: Create an index on device_id and timestamp for faster queries
